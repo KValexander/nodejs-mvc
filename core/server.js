@@ -1,11 +1,19 @@
 /* Require http */
 const http = require("http");
 
+/* Require db */
+const db = require("./db.js");
+
 /* Require routes */
 const route = require("../routes.js");
 
 /* Server */
 const server = {
+
+	/* Database connection */
+	connect: function(data) {
+		db.connection(data);
+	},
 
 	/* Server start */
 	start: (host, port) => {

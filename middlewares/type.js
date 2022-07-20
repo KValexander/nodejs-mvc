@@ -14,12 +14,7 @@ const type = {
 			"Content-Type": "application/json"
 		});
 		return true;
-	},
-
-	test: function(req, res) {
-		console.log("test");
-		return true;
-	},
+	}
 
 };
 

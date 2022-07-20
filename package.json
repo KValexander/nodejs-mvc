@@ -2,9 +2,12 @@
 	"name": "training",
 	"version": "1.0.0",
 	"description": "nodejs training project",
-	"main": "app.js",
 	"author": "KValexander",
+	"main": "app.js",
 	"scripts": {
 		"start": "node app.js"
+	},
+	"dependencies": {
+		"mysql2": "^2.3.3"
 	}
 }

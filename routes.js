@@ -19,11 +19,7 @@ route.get("/controller", main.main).middleware(type.html);
 /* Route groups */
 route.group(["middleware", type.html], function() {
 
-	route.group(["middleware", type.test], function() {
-
-		route.get("/group", main.main).middleware(type.json);
-
-	});
+	route.get("/group", main.main).middleware(type.json);
 
 });
 

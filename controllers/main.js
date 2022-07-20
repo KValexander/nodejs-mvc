@@ -1,7 +1,9 @@
+const view = require("../core/view.js");
+
 const main = {
 
 	main: function(request, response) {
-		response.end("<h3>Controller!</h3>");
+		view.out("index.html", response);
 	},
 
 };

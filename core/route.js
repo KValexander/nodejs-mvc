@@ -52,7 +52,7 @@ const route = {
 		callback();
 
 		this.groups.pop();
-		
+
 		return this;
 	},
 

@@ -1,4 +1,10 @@
 {
 	"name": "training",
-	"version": "1.0.0"
+	"version": "1.0.0",
+	"description": "nodejs training project",
+	"main": "app.js",
+	"author": "KValexander",
+	"scripts": {
+		"start": "node app.js"
+	}
 }

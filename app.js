@@ -1,2 +1,5 @@
+/* Require server */
 const server = require("./core/server.js");
-server.start("localhost", 3000);
+
+/* Start server */
+server.start("localhost", 80);

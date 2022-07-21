@@ -1,3 +1,4 @@
+/* Require fs promises */
 const fs = require("fs").promises;
 
 const view = {
@@ -5,38 +6,33 @@ const view = {
 	path: process.cwd() + "/view/",
 
 	/* Read file */
-	read: function(path, callback) {
+	read: async function(path) {
+		let result;
 
-		fs.readFile(path)
-		.then(contents => {
-			return callback({
+		try {
+			result = {
 				code: 200,
-				content: contents
-			});
-		})
-		.catch(err => {
-			return callback({
-				code: 404,
-				content: "File not found"
-			});
-		});
+				content: await fs.readFile(path)
+			}
+		} catch(err) {
+			result = {
+				code: 400,
+				content: err
+			}
+		}
 
+		return result;
 	},
 
-	/* Out file (haha) */
-	out: function(filename, response) {
+	/* Out file */
+	out: async function(filename, response) {
 
-		/* Read file */
-		this.read(this.path + filename, result => {
-
-			/* Out file */
-			response.writeHeader(result.code);
-			response.end(result.content);
-
-		});
+		let content = await this.read(this.path + filename);
+		response.end(content.content);
 
 	}
 
 };
 
+/* Export */
 module.exports = view;

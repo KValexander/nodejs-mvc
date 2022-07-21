@@ -23,4 +23,5 @@ route.group(["middleware", type.html], function() {
 
 });
 
+/* Export */
 module.exports = route;

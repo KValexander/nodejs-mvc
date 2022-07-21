@@ -101,4 +101,5 @@ const route = {
 
 };
 
+/* Export */
 module.exports = route;

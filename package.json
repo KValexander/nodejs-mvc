@@ -4,6 +4,7 @@
 	"description": "nodejs training project",
 	"author": "KValexander",
 	"main": "app.js",
+	"license": "MIT",
 	"scripts": {
 		"start": "node app.js"
 	},

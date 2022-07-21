@@ -40,7 +40,7 @@ const main = {
 		// 	orderby: ["created_at", "DESC"]
 		// });
 
-		console.log(result);
+		// console.log(result);
 			
 		/* Out view */
 		view.out("index.html", response);

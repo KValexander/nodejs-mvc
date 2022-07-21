@@ -109,7 +109,6 @@ const model = {
 
 		/* SQL query */
 		sql = `SELECT ${select} FROM \`${this.table}\`${where}${orderby}${limit};`;
-		console.log(sql);
 
 		/* Query */
 		result = await db.query(sql);
@@ -140,10 +139,7 @@ const model = {
 
 		/* Fields */
 		if("fields" in object) {
-			for(let i = 0; i < object.fields.length; i++) {
-				fields += `\`${object.fields[i]}\`, `;
-			}
-			fields = "(" + fields.slice(0, -2) + ")";
+			fields = "(" + this._select_processing(object.fields) + ")";
 		}
 
 		/* Values is Array */

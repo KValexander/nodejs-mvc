@@ -26,10 +26,21 @@ const main = {
 		/* Delete user */
 
 		/* Get user */
+		// result = await user.get({
+		// 	where: ["user_id", ">=", "3"],
+		// 	orderby: ["created_at", "DESC"],
+		// 	select: ["email", "login"],
+		// 	limit: 2,
+		// 	first: false
+		// });
 		
 		/* Get all users */
-		// result = await user.all();
-		// console.log(result);
+		// result = await user.all({
+		// 	select: ["email", "login"],
+		// 	orderby: ["created_at", "DESC"]
+		// });
+
+		console.log(result);
 			
 		/* Out view */
 		view.out("index.html", response);

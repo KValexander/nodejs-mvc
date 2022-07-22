@@ -6,49 +6,29 @@ const model = {
 	table: "",
 	pkey: "",
 
-	/*  Get all
-		arguments = {
-			select: [],
-			orderby: []
-		}
-	*/
-	all: async function(object = {}) {
-		/* Variables */
-		let result, sql,
-			select = "*",
-			orderby = "";
+	/* Query */
+	_query: async function(sql, first=false) {
+		let result;
 
-		/* Select */
-		if("select" in object) {
-			select = this._select_processing(object.select);
-		}
-
-		/* Orderby */
-		if("orderby" in object) {
-			orderby = ` ORDER BY \`${object.orderby[0]}\` ${object.orderby[1]}`;
-		}
-
-		/* SQL query */
-		sql = `SELECT ${select} FROM \`${this.table}\`${orderby};`;
-
-		/* Query */
+		console.log(sql);
 		result = await db.query(sql);
 
-		/* Handling result */
 		if(result.code == 200) {
 			result = {
 				code: result.code,
-				content: result.content[0]
+				content: (first) ?
+					result.content[0][0] : result.content[0]
 			}
 		}
-		
+
 		return result;
 	},
 
 	/*  Get one
 		arguments = {
-			id: 0,
+			id: 0 / [],
 			limit: 0,
+			join: [] / {},
 			where: [],
 			select: [],
 			orderby: [],
@@ -59,16 +39,16 @@ const model = {
 		/* Variables */
 		let result, sql, cond,
 			first = false,
+			join = "",
 			where = "",
 			select = "*",
 			orderby = "",
-			limit = "",
-			id = 0;
+			limit = "";
 
 		/* If the argument is a number */
-		if(Number.isFinite(object)) {
-			id = object;
-			where = ` WHERE \`${this.pkey}\`=${id}`;
+		if(Number.isFinite(parseInt(object))) {
+			where = this._id_processing(object);
+			first = true;
 		}
 
 		/* If the argument is an object */
@@ -76,13 +56,17 @@ const model = {
 
 			/* ID */
 			if("id" in object) {
-				id = object.id;
-				where = ` WHERE \`${this.pkey}\`=${id}`;
+				where = this._id_processing(object.id);
 			}
 
 			/* First */
 			if("first" in object) {
 				first = object.first;
+			}
+
+			/* Join */
+			if("join" in object) {
+				join = this._join_processing(object.join);
 			}
 
 			/* Select */
@@ -97,7 +81,7 @@ const model = {
 
 			/* Orderby */
 			if("orderby" in object) {
-				orderby = ` ORDER BY \`${object.orderby[0]}\` ${object.orderby[1]}`;
+				orderby = ` ORDER BY ${object.orderby[0]} ${object.orderby[1]}`;
 			}
 
 			/* Limit */
@@ -108,19 +92,10 @@ const model = {
 		}
 
 		/* SQL query */
-		sql = `SELECT ${select} FROM \`${this.table}\`${where}${orderby}${limit};`;
+		sql = `SELECT ${select} FROM ${this.table}${join}${where}${orderby}${limit};`;
 
 		/* Query */
-		result = await db.query(sql);
-
-		/* Handling result */
-		if(result.code == 200) {
-			result = {
-				code: result.code,
-				content: (first) ?
-					result.content[0][0] : result.content[0]
-			}
-		}
+		result = this._query(sql, first);
 
 		return result;
 	},
@@ -143,35 +118,125 @@ const model = {
 		}
 
 		/* Values is Array */
-		if (Array.isArray(object.values)) {
-			for(let i = 0; i < object.values.length; i++) {
-				values += this._values_processing(object.values[i]) + ", ";
-			}
-			values = "VALUES " + values.slice(0, -2);
-		}
-
-		/* Values is Object */
-		else if(typeof object.values == "object") {
-			values = "VALUES " + this._values_processing(object.values);
+		if("values" in object) {
+			values = this._values_processing(object.values);
 		}
 
 		/* SQL query */
-		sql = `INSERT INTO \`${this.table}\`${fields} ${values};`;
+		sql = `INSERT INTO ${this.table}${fields}${values};`;
 
-		/* Result */
-		result = await db.query(sql);
+		/* Query */
+		result = this._query(sql);
 
 		return result;
 	},
 
-	/* Update */
+	/* Update
+		arguments = {
+			id: 0 / [],
+			where: [],
+			values: {}
+		}
+	*/
 	update: async function(object={}) {
+		/* Variables */
+		let result, sql,
+			where = "",
+			values = "";
 
+		/* ID */
+		if("id" in object) {
+			where = this._id_processing(object.id);
+		}
+
+		/* Where */
+		if("where" in object) {
+			where = this._where_processing(object.where);
+		}
+
+		/* Values */
+		if("values" in object) {
+			values = this._set_processing(object.values);
+		}
+
+		/* SQL query */
+		sql = `UPDATE ${this.table}${values}${where}`;
+
+		/* Query */
+		result = await this._query(sql);
+
+		return result;
 	},
 
-	/* Delete */
+	/* Delete
+		arguments = {
+			id: 0 / [],
+			where: [],
+			join: []
+		}
+	*/
 	delete: async function(object={}) {
+		/* Variables */
+		let result, sql,
+			tables = "",
+			where = "",
+			join = "";
 
+		/* If the argument is a number */
+		if(Number.isFinite(parseInt(object))) {
+			where = this._id_processing(object);
+		}
+
+		/* If the argument is an object */
+		else {
+
+			/* ID */
+			if("id" in object) {
+				where = this._id_processing(object.id);
+			}
+
+			/* Where */
+			if("where" in object) {
+				where = this._where_processing(object.where);
+			}
+
+			/* Join */
+			if("join" in object) {
+				join = this._join_processing(object.join);
+
+				if(Array.isArray(object.join)) {
+					for(let i = 0; i < object.join.length; i++) {
+						if(!i) {
+							tables += this.table + ", ";
+						} else {
+							tables += object.join[i].table + ", ";
+						}
+					}
+					tables = " " + tables.slice(0, -2);
+				} else {
+					tables = ` ${this.table}, ${object.join.table}`;
+				}
+			}
+
+		}
+
+		/* SQL query */
+		sql = `DELETE${tables} FROM ${this.table}${join}${where};`;
+
+		/* Query */
+		result = await this._query(sql);
+
+		return result;
+	},
+
+	/* Join */
+	join: function(ekey, type="INNER") {
+		return {
+			table: this.table,
+			pkey: this.pkey,
+			ekey: ekey,
+			type: type
+		};
 	},
 
 	/*  SQL constructor
@@ -181,7 +246,36 @@ const model = {
 		}
 	*/
 	_sql_constructor: function(object) {
+		let sql;
 
+		switch(object.type) {
+
+			case "select": break;
+			case "insert": break;
+			case "update": break;
+			case "delete": break;
+
+		}
+
+
+		return sql;
+	},
+
+	/* ID processing */
+	_id_processing: function(array) {
+		let result = "";
+
+		if(Array.isArray(array)) {
+			for(let i = 0; i < array.length; i++) {
+				result += array[i] + ", ";
+			}
+			result = ` WHERE ${this.pkey} IN (${ result.slice(0, -2)})`;
+
+		} else {
+			result = ` WHERE ${this.pkey}=${array}`;
+		}
+
+		return result;
 	},
 
 	/* Select processing*/
@@ -189,10 +283,25 @@ const model = {
 		let result = "";
 
 		for(let i = 0; i < select.length; i++) {
-			result += `\`${select[i]}\`, `;
+			result += `${select[i]}, `;
 		}
 
 		result = result.slice(0, -2);
+
+		return result;
+	},
+
+	/* Join processing */
+	_join_processing: function(array) {
+		let result;
+		
+		if(Array.isArray(array)) {
+			for(let i = 0; i < array.length; i++) {
+				result += ` ${array[i].type} JOIN ${array[i].table} ON ${this.table}.${this.pkey}=${array[i].table}.${array[i].ekey}`;
+			}
+		} else {
+			result = ` ${array.type} JOIN ${array.table} ON ${this.table}.${this.pkey}=${array.table}.${array.ekey}`;
+		}
 
 		return result;
 	},
@@ -213,7 +322,7 @@ const model = {
 
 				/* First condition */
 				if(!i) {
-					result += ` WHERE \`${where[i][0]}\`${cond}'${where[i][where[i].length - 1]}'`;
+					result += ` WHERE ${where[i][0]}${cond}'${where[i][where[i].length - 1]}'`;
 				}
 
 				/* Subsequent conditions */
@@ -221,11 +330,11 @@ const model = {
 
 					/* Condition */
 					if(array.includes(where[i][0])) {
-						condition = ` ${where[i][0]} \`${where[i][1]}\``;
+						condition = ` ${where[i][0]} ${where[i][1]}`;
 					}
 
 					else {
-						condition = ` AND \`${where[i][0]}\``;
+						condition = ` AND ${where[i][0]}`;
 					}
 
 					result += `${condition}${cond}'${where[i][where[i].length - 1]}'`;
@@ -236,14 +345,47 @@ const model = {
 		/* One condition */
 		} else {
 			cond = (where.length == 2) ? "=" : where[1];
-			result = ` WHERE \`${where[0]}\`${cond}'${where[where.length - 1]}'`;
+			result = ` WHERE ${where[0]}${cond}'${where[where.length - 1]}'`;
 		}
+
+		return result;
+	},
+
+	/* Set processing */
+	_set_processing: function(set) {
+		let result = "";
+
+		for(let key in set) {
+			result += `${key}='${set[key]}', `;
+		}
+
+		result = " SET " + result.slice(0, -2);
 
 		return result;
 	},
 
 	/* Values processing */
 	_values_processing: function(values) {
+		let result = "";
+
+		/* Values is Array */
+		if (Array.isArray(values)) {
+			for(let i = 0; i < values.length; i++) {
+				result += this._value_processing(values[i]) + ", ";
+			}
+			result = " VALUES " + result.slice(0, -2);
+		}
+
+		/* Values is Object */
+		else if(typeof values == "object") {
+			result = " VALUES " + this._value_processing(values);
+		}
+
+		return result;
+	},
+
+	/* Value processing */
+	_value_processing: function(values) {
 		let result = "";
 
 		for(let key in values) {

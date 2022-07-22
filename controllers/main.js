@@ -14,7 +14,7 @@ const main = {
 
 		/* Add user */
 		result = await user.add({
-			fields: ["email", "login", "password"],
+			select: ["email", "login", "password"],
 			values: {
 				email: "1@1",
 				login: "login",
@@ -28,7 +28,7 @@ const main = {
 
 		/* Update user */
 		result = await user.update({
-			id: id,
+			where: ["user_id", id],
 			values: {
 				email: "0@0",
 				login: "nigol",

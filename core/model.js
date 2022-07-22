@@ -6,7 +6,12 @@ const model = {
 	table: "",
 	pkey: "",
 
-	/* Query */
+	/*  Query
+		return = {
+			code: 0,
+			content: "" / {} / [] / etc
+		}
+	*/
 	_query: async function(sql, first=false) {
 		let result;
 
@@ -24,83 +29,33 @@ const model = {
 		return result;
 	},
 
-	/*  Get one
+	/*  SELECT
 		arguments = {
-			id: 0 / [],
-			limit: 0,
-			join: [] / {},
-			where: [],
-			select: [],
+			select:  [],
+			join: 	 [] / {},
+			where: 	 [],
 			orderby: [],
-			first: true / false
+			limit: 	 0,
+			first: 	 true / false
 		}
 	*/
 	get: async function(object = {}) {
 		/* Variables */
-		let result, sql, cond,
-			first = false,
-			join = "",
-			where = "",
-			select = "*",
-			orderby = "",
-			limit = "";
+		let result, data, sql;
 
-		/* If the argument is a number */
-		if(Number.isFinite(parseInt(object))) {
-			where = this._id_processing(object);
-			first = true;
-		}
+		/* Data processing */
+		data = this._data_processing("select", object);
 
-		/* If the argument is an object */
-		else if(typeof object == "object") {
-
-			/* ID */
-			if("id" in object) {
-				where = this._id_processing(object.id);
-			}
-
-			/* First */
-			if("first" in object) {
-				first = object.first;
-			}
-
-			/* Join */
-			if("join" in object) {
-				join = this._join_processing(object.join);
-			}
-
-			/* Select */
-			if("select" in object) {
-				select = this._select_processing(object.select);
-			}
-
-			/* Where */
-			if("where" in object) {
-				where = this._where_processing(object.where);
-			}
-
-			/* Orderby */
-			if("orderby" in object) {
-				orderby = ` ORDER BY ${object.orderby[0]} ${object.orderby[1]}`;
-			}
-
-			/* Limit */
-			if("limit" in object) {
-				limit = " LIMIT " + object.limit;
-			}
-
-		}
-
-		/* SQL query */
-		sql = `SELECT ${select} FROM ${this.table}${join}${where}${orderby}${limit};`;
+		/* SQL constructor */
+		sql = this._sql_constructor(data);
 
 		/* Query */
-		result = this._query(sql, first);
+		result = this._query(sql, data.first);
 
 		return result;
 	},
 
-	/*  Insert
+	/*  INSERT
 		arguments = {
 			fields: [],
 			values: [] / {}
@@ -108,22 +63,13 @@ const model = {
 	*/
 	add: async function(object = {}) {
 		/* Variables */
-		let result, sql,
-			fields = "",
-			values = "";
+		let result, data, sql;
 
-		/* Fields */
-		if("fields" in object) {
-			fields = "(" + this._select_processing(object.fields) + ")";
-		}
+		/* Data processing */
+		data = this._data_processing("insert", object);
 
-		/* Values is Array */
-		if("values" in object) {
-			values = this._values_processing(object.values);
-		}
-
-		/* SQL query */
-		sql = `INSERT INTO ${this.table}${fields}${values};`;
+		/* SQL constructor */
+		sql = this._sql_constructor(data);
 
 		/* Query */
 		result = this._query(sql);
@@ -131,44 +77,29 @@ const model = {
 		return result;
 	},
 
-	/* Update
+	/*  UPDATE
 		arguments = {
-			id: 0 / [],
 			where: [],
 			values: {}
 		}
 	*/
 	update: async function(object={}) {
 		/* Variables */
-		let result, sql,
-			where = "",
-			values = "";
+		let result, data, sql;
 
-		/* ID */
-		if("id" in object) {
-			where = this._id_processing(object.id);
-		}
+		/* Data processing */
+		data = this._data_processing("update", object);
 
-		/* Where */
-		if("where" in object) {
-			where = this._where_processing(object.where);
-		}
-
-		/* Values */
-		if("values" in object) {
-			values = this._set_processing(object.values);
-		}
-
-		/* SQL query */
-		sql = `UPDATE ${this.table}${values}${where}`;
+		/* SQL constructor */
+		sql = this._sql_constructor(data);
 
 		/* Query */
-		result = await this._query(sql);
+		result = this._query(sql);
 
 		return result;
 	},
 
-	/* Delete
+	/*  DELETE
 		arguments = {
 			id: 0 / [],
 			where: [],
@@ -177,109 +108,166 @@ const model = {
 	*/
 	delete: async function(object={}) {
 		/* Variables */
-		let result, sql,
-			tables = "",
-			where = "",
-			join = "";
+		let result, data, sql;
 
-		/* If the argument is a number */
-		if(Number.isFinite(parseInt(object))) {
-			where = this._id_processing(object);
-		}
+		/* Data processing */
+		data = this._data_processing("delete", object);
 
-		/* If the argument is an object */
-		else {
-
-			/* ID */
-			if("id" in object) {
-				where = this._id_processing(object.id);
-			}
-
-			/* Where */
-			if("where" in object) {
-				where = this._where_processing(object.where);
-			}
-
-			/* Join */
-			if("join" in object) {
-				join = this._join_processing(object.join);
-
-				if(Array.isArray(object.join)) {
-					for(let i = 0; i < object.join.length; i++) {
-						if(!i) {
-							tables += this.table + ", ";
-						} else {
-							tables += object.join[i].table + ", ";
-						}
-					}
-					tables = " " + tables.slice(0, -2);
-				} else {
-					tables = ` ${this.table}, ${object.join.table}`;
-				}
-			}
-
-		}
-
-		/* SQL query */
-		sql = `DELETE${tables} FROM ${this.table}${join}${where};`;
+		/* SQL constructor */
+		sql = this._sql_constructor(data);
 
 		/* Query */
-		result = await this._query(sql);
+		result = this._query(sql);
 
 		return result;
 	},
 
-	/* Join */
+	/*  JOIN
+		return = {
+			table: "table_name",
+			pkey:  "primary_key",
+			ekey:  "external_key",
+			type:  "join_type"
+		}
+	*/
 	join: function(ekey, type="INNER") {
 		return {
 			table: this.table,
-			pkey: this.pkey,
-			ekey: ekey,
-			type: type
+			pkey:  this.pkey,
+			ekey:  ekey,
+			type:  type
 		};
 	},
 
 	/*  SQL constructor
 		arguments = {
-			type: 'select' / 'insert' / 'update' / 'delete',
-
+			type: 	 'select' / 'insert' / 'update' / 'delete',
+			select:  [],
+			join: 	 [] / {},
+			where: 	 [],
+			orderby: [],
+			limit: 	 0,
+			values:  [] / {},
+			first: 	 true / false
 		}
 	*/
 	_sql_constructor: function(object) {
-		let sql;
+		/* Variables */
+		let sql, buffer = [],
+			base 	= "",
+			select 	= "",
+			where 	= "",
+			join 	= "",
+			limit 	= "",
+			orderby = "",
+			values 	= "";
 
+		/* Query type */
 		switch(object.type) {
 
-			case "select": break;
-			case "insert": break;
-			case "update": break;
-			case "delete": break;
+			/* SELECT */
+			case "select":
+
+				select = this._select_processing(object.select);
+
+				base = `SELECT ${select} FROM ${this.table}`;
+
+			break;
+
+			/* INSERT */
+			case "insert":
+
+				select = "(" + this._select_processing(object.select) + ")";
+				values = this._values_processing(object.values);
+
+				base = `INSERT INTO ${this.table}${select}${values}`;
+
+			break;
+
+			/* UPDATE */
+			case "update":
+
+				values = this._set_processing(object.values);
+
+				base = `UPDATE ${this.table}${values}`;
+
+			break;
+
+			/* DELETE */
+			case "delete":
+
+				if(Object.keys(object.join).length) {
+					if(Array.isArray(object.join)) {
+						buffer = object.join.map(j => j.table);
+					} else {
+						buffer.push(object.join.table);
+					}
+					buffer.unshift(this.table);
+					select = " " + this._select_processing(buffer);
+				}
+
+				base = `DELETE${select} FROM ${this.table}`;
+
+			break;
 
 		}
 
+		/* JOIN */
+		join = this._join_processing(object.join);
+
+		/* WHERE */
+		where = this._where_processing(object.where);
+
+		/* ORDER BY */
+		if(object.orderby.length) {
+			orderby = ` ORDER BY ${object.orderby[0]} ${object.orderby[1]}`;
+		}
+
+		/* LIMIT */
+		if(object.limit) {
+			limit = " LIMIT " + object.limit;
+		}
+
+		/* SQL */
+		sql = `${base}${join}${where}${orderby}${limit}`;
 
 		return sql;
 	},
 
-	/* ID processing */
-	_id_processing: function(array) {
-		let result = "";
+	/*  Data processing
+		type = ""
+		object = 0 / {}
+	*/
+	_data_processing: function(type, object) {
+		let data = {
+			type: 	type,
+			select:  [],
+			join: 	 [],
+			where: 	 [],
+			orderby: [],
+			limit: 	 0,
+			values:  []
+		};
 
-		if(Array.isArray(array)) {
-			for(let i = 0; i < array.length; i++) {
-				result += array[i] + ", ";
-			}
-			result = ` WHERE ${this.pkey} IN (${ result.slice(0, -2)})`;
-
+		if(Number.isFinite(parseInt(object))) {
+			data.where = [this.pkey, object];
 		} else {
-			result = ` WHERE ${this.pkey}=${array}`;
+			for(let key in data) {
+				if(object[key]) {
+					data[key] = object[key];
+				}
+			}
 		}
 
-		return result;
+		return data;
 	},
 
-	/* Select processing*/
+	/*  Select processing
+		select = [] 
+	*/
 	_select_processing: function(select) {
+		if(!select.length) return "*";
+
 		let result = "";
 
 		for(let i = 0; i < select.length; i++) {
@@ -291,23 +279,30 @@ const model = {
 		return result;
 	},
 
-	/* Join processing */
-	_join_processing: function(array) {
-		let result;
+	/*  Join processing
+		join = [] / {}
+	*/
+	_join_processing: function(join) {
+		if(!Object.keys(join).length) return "";
+
+		let result = "";
 		
-		if(Array.isArray(array)) {
-			for(let i = 0; i < array.length; i++) {
-				result += ` ${array[i].type} JOIN ${array[i].table} ON ${this.table}.${this.pkey}=${array[i].table}.${array[i].ekey}`;
+		if(Array.isArray(join)) {
+			for(let i = 0; i < join.length; i++) {
+				result += ` ${join[i].type} JOIN ${join[i].table} ON ${this.table}.${this.pkey}=${join[i].table}.${join[i].ekey}`;
 			}
 		} else {
-			result = ` ${array.type} JOIN ${array.table} ON ${this.table}.${this.pkey}=${array.table}.${array.ekey}`;
+			result = ` ${join.type} JOIN ${join.table} ON ${this.table}.${this.pkey}=${join.table}.${join.ekey}`;
 		}
 
 		return result;
 	},
 
-	/* Where processing */
+	/*  Where processing
+		where = [] */
 	_where_processing: function(where) {
+		if(!where.length) return "";
+
 		let condition, cond, result = "";
 		let array = ["and", "or", "AND", "OR"];
 		let min_length;
@@ -351,8 +346,12 @@ const model = {
 		return result;
 	},
 
-	/* Set processing */
+	/*  Set processing
+		set = {}
+	*/
 	_set_processing: function(set) {
+		if(!Object.keys(set).length) return "";
+
 		let result = "";
 
 		for(let key in set) {
@@ -364,8 +363,12 @@ const model = {
 		return result;
 	},
 
-	/* Values processing */
+	/*  Values processing
+		values = [] / {}
+	*/
 	_values_processing: function(values) {
+		if(!Object.keys(values).length) return "";
+
 		let result = "";
 
 		/* Values is Array */
@@ -384,7 +387,9 @@ const model = {
 		return result;
 	},
 
-	/* Value processing */
+	/*  Value processing
+		value = {}
+	*/
 	_value_processing: function(values) {
 		let result = "";
 

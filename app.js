@@ -9,5 +9,5 @@ server.connect({
 	host: "localhost",
 	user: "root",
 	password: "root",
-	database: "constructor_vn"
+	database: ""
 });

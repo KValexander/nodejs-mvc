@@ -1,15 +1,15 @@
 /* Require model */
 const model = require("../core/model.js");
 
-/* Project model */
-const project = {
+/* Order model */
+const order = {
 	__proto__: model, // inheritance
 
 	/* Table data */
-	table: "projects",
-	pkey: "project_id"
+	table: "orders",
+	pkey: "order_id"
 
 }
 
 /* Export */
-module.exports = project;
+module.exports = order;

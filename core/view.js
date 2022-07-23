@@ -30,21 +30,27 @@ const view = {
 		content = ""
 		args = {}
 	*/
-	parse: function(content, args={}) {
+	parse: async function(content, args={}) {
 		/* Variables */
 		let result = content, key;
 		let match = [];
 
 		/* Getting all labels */
-		match = `${result}`.match(/\{\{.*?\}\}/g);
+		if(match = `${result}`.match(/\{\{.*?\}\}/g)) {
+			/* Label replacement */
+			for(let i = 0; i < match.length; i++) {
+				key = match[i].replace(/(\{|\}|\s)/g, "");
+				
+				if(/\.\w+$/.test(key)) {
+					key = await this.get(key);
+					key = (key.code == 200) ? key.content : "";
+				} else {
+					key = (key in args) ? args[key] : "";
+				}
 
-		/* Label replacement */
-		for(let i = 0; i < match.length; i++) {
-			key = match[i].replace(/(\{|\}|\s)/g, "");
-			key = (key in args) ? args[key] : "";
-			result = `${result}`.replace(match[i], key);
+				result = `${result}`.replace(match[i], key);
+			}
 		}
-
 
 		return result;
 	},
@@ -68,13 +74,12 @@ const view = {
 			if("args" in object) {
 				args = object.args;
 			}
-
 		}
 
 		result = await this.read(this.path + filename);
 		
 		if(result.code == 200) {
-			result.content = this.parse(result.content, args);
+			result.content = await this.parse(result.content, args);
 		}
 
 		return result;
@@ -87,7 +92,7 @@ const view = {
 			args: {}
 		}
 	*/
-	out: async function(response, object={}) {
+	out: async function(response, object={}, args={}) {
 		let result;
 
 		result = await this.get(object);
@@ -96,6 +101,7 @@ const view = {
 			result.content = "View not found";
 		}
 
+		response.setHeader("Content-Type", "text/html");
 		response.end(result.content);
 	}
 

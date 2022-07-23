@@ -1,5 +1,11 @@
 const route = {
 
+	/* Api */
+	apis: {
+		state: false,
+		view: ""
+	},
+
 	/* Current route */
 	current: {
 		method: null,
@@ -13,6 +19,14 @@ const route = {
 	routes: {
 		GET: {},
 		POST: {}
+	},
+
+	/* Start api */
+	api: function(filename) {
+		this.apis = {
+			state: true,
+			view: filename
+		};
 	},
 
 	/* Checking if a route exists */

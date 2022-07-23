@@ -1,15 +1,15 @@
 /* Require model */
 const model = require("../core/model.js");
 
-/* User model */
-const user = {
+/* Client model */
+const client = {
 	__proto__: model, // inheritance
 
 	/* Table data */
-	table: "users",
-	pkey: "user_id"
+	table: "clients",
+	pkey: "client_id"
 
 }
 
 /* Export */
-module.exports = user;
+module.exports = client;

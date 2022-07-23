@@ -2,43 +2,44 @@
 const view = require("../core/view.js");
 
 /* Require models */
-const user = require("../models/user.js");
-const project = require("../models/project.js");
 
 /* Main controller */
 const main = {
 
 	/* Main function */
 	main: async function(request, response) {
-		let result, id;
+
+		view.out(response, "index.html");
+		
+		// let result, id;
 
 		/* Add user */
-		result = await user.add({
-			select: ["email", "login", "password"],
-			values: {
-				email: "1@1",
-				login: "login",
-				password: "123456"
-			}
-		});
-		console.log(result);
+		// result = await user.add({
+		// 	select: ["email", "login", "password"],
+		// 	values: {
+		// 		email: "1@1",
+		// 		login: "login",
+		// 		password: "123456"
+		// 	}
+		// });
+		// console.log(result);
 
 		/* ID */
-		id = result.content.insertId;
+		// id = result.content.insertId;
 
 		/* Update user */
-		result = await user.update({
-			where: ["user_id", id],
-			values: {
-				email: "0@0",
-				login: "nigol",
-				password: "654321"
-			}
-		});
-		console.log(result);
+		// result = await user.update({
+		// 	where: ["user_id", id],
+		// 	values: {
+		// 		email: "0@0",
+		// 		login: "nigol",
+		// 		password: "654321"
+		// 	}
+		// });
+		// console.log(result);
 
 		/* Get user */
-		result = await user.get(id); // specific user
+		// result = await user.get(id); // specific user
 		// result = await user.get(); // all users
 		// result = await user.get({ // constructor
 		// 	where: [
@@ -51,28 +52,46 @@ const main = {
 		// 	limit: 5,
 		// 	first: false
 		// });
-		console.log(result);
+		// console.log(result);
 
 		/* Delete user */
-		result = await user.delete(id);
+		// result = await user.delete(id);
 		// result = await user.delete({
 		// 	where: ["projects.user_id", 1],
 		// 	join: project.join("user_id", "right")
 		// });
-		console.log(result);
+		// console.log(result);
 
 
 		/* Out view */
 		// view.out(response, "index.html");
-		view.out(response, {
-			filename: "index.html",
-			args: {
-				meta: "<h2>Meta!</h2>",
-				content: "<h3>It's work!</h3>"
-			}
-		});
+		// view.out(response, {
+		// 	filename: "index.html",
+		// 	args: {
+		// 		meta: "<h2>Meta!</h2>",
+		// 		content: "<h3>It's work!</h3>"
+		// 	}
+		// });
 
 	},
+
+	/* Products page */
+	products: function(request, response) {
+
+		view.out(response, "products.html");
+	},
+
+	/* Login page */
+	login: function(request, response) {
+
+		view.out(response, "login.html");
+	},
+
+	/* Register page */
+	register: function(request, response) {
+
+		view.out(response, "register.html");
+	}
 
 };
 

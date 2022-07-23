@@ -7,6 +7,9 @@ const fs = require("fs");
 /* Require db */
 const db = require("./db.js");
 
+/* Require view */
+const view = require("./view.js");
+
 /* Require routes */
 const route = require("../routes.js");
 
@@ -46,8 +49,12 @@ const server = {
 
 		/* Check if a route exists */
 		if(!route.check_exists(request.method, request.url)) {
-			response.status_code = 404;
-			return response.end("Route not found");
+			if(route.apis.state) {
+				return view.out(response, route.apis.view);
+			} else {
+				response.status_code = 404;
+				return response.end("Route not found");
+			}
 		}
 
 		/* Get route value */
@@ -62,7 +69,7 @@ const server = {
 		/* Check route value */
 		if(typeof object.value != "function") {
 			response.status_code = 404;
-			return response.end("Value not found");
+			return response.end("Function not found");
 		}
 
 		/* Call route value */

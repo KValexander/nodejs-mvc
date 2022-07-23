@@ -63,7 +63,14 @@ const main = {
 
 
 		/* Out view */
-		view.out("index.html", response);
+		// view.out(response, "index.html");
+		view.out(response, {
+			filename: "index.html",
+			args: {
+				meta: "<h2>Meta!</h2>",
+				content: "<h3>It's work!</h3>"
+			}
+		});
 
 	},
 

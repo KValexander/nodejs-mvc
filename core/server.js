@@ -1,6 +1,9 @@
 /* Require http */
 const http = require("http");
 
+/* Require fs */
+const fs = require("fs");
+
 /* Require db */
 const db = require("./db.js");
 
@@ -36,8 +39,14 @@ const server = {
 	/* Call route */
 	call_route: function(request, response) {
 
+		/* Сheck if route is a file */
+		if(server.check_file(request.url)) {
+			return server.connect_file(request, response);
+		}
+
 		/* Check if a route exists */
 		if(!route.check_exists(request.method, request.url)) {
+			response.status_code = 404;
 			return response.end("Route not found");
 		}
 
@@ -52,6 +61,7 @@ const server = {
 
 		/* Check route value */
 		if(typeof object.value != "function") {
+			response.status_code = 404;
 			return response.end("Value not found");
 		}
 
@@ -70,17 +80,43 @@ const server = {
 
 			/* Check middleware */
 			if(typeof middleware != "function") {
+				response.status_code = 404;
 				return response.end("Middleware not found");
 			}
 
 			/* Check middleware */
 			if(!middleware(request, response)) {
+				response.status_code = 400;
 				return response.end("The middleware returned a false value");
 			}
 
 		}
 
-	}
+	},
+
+	/* Check file */
+	check_file: function(url) {
+		let regex = /\.\w+$/;
+		return regex.test(url);
+	},
+
+	/* Connect file */
+	connect_file: async function(request, response) {
+
+		/* File exists */
+		try {
+			response.status_code = 200;
+			response.write(fs.readFileSync(process.cwd() + request.url));
+		}
+
+		/* File not exists */
+		catch(err) {
+			response.status_code = 404;
+			response.write("Route not found");
+		}
+
+		response.end();
+	},
 
 };
 

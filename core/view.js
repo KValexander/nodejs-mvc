@@ -5,7 +5,9 @@ const view = {
 	/* Path to views */
 	path: process.cwd() + "/view/",
 
-	/* Read file */
+	/*  Read file
+		path = ""
+	*/
 	read: async function(path) {
 		let result;
 
@@ -24,12 +26,77 @@ const view = {
 		return result;
 	},
 
-	/* Out file */
-	out: async function(filename, response) {
+	/*  Parse content
+		content = ""
+		args = {}
+	*/
+	parse: function(content, args={}) {
+		/* Variables */
+		let result = content, key;
+		let match = [];
 
-		let content = await this.read(this.path + filename);
-		response.end(content.content);
+		/* Getting all labels */
+		match = `${result}`.match(/\{\{.*?\}\}/g);
 
+		/* Label replacement */
+		for(let i = 0; i < match.length; i++) {
+			key = match[i].replace(/(\{|\}|\s)/g, "");
+			key = (key in args) ? args[key] : "";
+			result = `${result}`.replace(match[i], key);
+		}
+
+
+		return result;
+	},
+
+	/*  Get file
+		object = "" / {
+			filename: "",
+			args: {}
+		}
+		args = {}
+	*/
+	get: async function(object="", argumnts={}) {
+		let result, filename=object, args=argumnts;
+
+		if(typeof object == "object") {
+
+			if("filename" in object) {
+				filename = object.filename;
+			}
+
+			if("args" in object) {
+				args = object.args;
+			}
+
+		}
+
+		result = await this.read(this.path + filename);
+		
+		if(result.code == 200) {
+			result.content = this.parse(result.content, args);
+		}
+
+		return result;
+	},
+
+	/*  Out file
+		response = {}
+		arguments = {
+			filename: "",
+			args: {}
+		}
+	*/
+	out: async function(response, object={}) {
+		let result;
+
+		result = await this.get(object);
+		
+		if(result.code == 400) {
+			result.content = "View not found";
+		}
+
+		response.end(result.content);
 	}
 
 };

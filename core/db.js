@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 
 const db = {
 	connect: null,
+	check: false,
 
 	/* Connection to database */
 	connection: function(data) {
@@ -12,8 +13,13 @@ const db = {
 
 		/* Check connection */
 		this.connect.connect(err => {
-			if(err) return console.log(`Error: ${err.message}`);
-			console.log("Mysql database connection established");
+			if(err) {
+				db.check = false;
+				console.log(`Error: ${err.message}`);
+			} else {
+				db.check = true;
+				console.log("Mysql database connection established");
+			}
 		});
 
 	},

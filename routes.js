@@ -3,10 +3,9 @@ const route = require("./core/route.js");
 
 /* Require controllers */
 const main = require("./controllers/main.js");
-const auth = require("./controllers/auth.js");
 
 /* Require middlewares */
-const type = require("./middlewares/type.js");
+const type_middleware = require("./middlewares/type.js");
 
 /*  Start api
 	All routes, in addition to files and already registered ones,
@@ -15,15 +14,13 @@ const type = require("./middlewares/type.js");
 route.api("index.html");
 
 /* Route groups */
-route.group(["middleware", type.html], function() {
+route.group(["middleware", type_middleware.html], function() {
 
 	route.get("/", main.main);
+	route.get("/orders", main.products);
+
 	route.get("/login", main.login);
 	route.get("/register", main.register);
-	route.get("/products", main.products);
-
-	route.post("/login", auth.login);
-	route.post("/register", auth.register);
 
 });
 

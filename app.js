@@ -11,3 +11,6 @@ server.connect({
 	password: "root",
 	database: ""
 });
+
+/* Set model for module auth */
+server.auth("client.js");

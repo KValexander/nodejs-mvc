@@ -4,11 +4,10 @@ const http = require("http");
 /* Require fs */
 const fs = require("fs");
 
-/* Require db */
-const db = require("./db.js");
-
-/* Require view */
-const view = require("./view.js");
+/* Require core */
+const auth 	= require("./auth.js");
+const db 	= require("./db.js");
+const view 	= require("./view.js");
 
 /* Require routes */
 const route = require("../routes.js");
@@ -19,6 +18,11 @@ const server = {
 	/* Database connection */
 	connect: function(data) {
 		db.connection(data);
+	},
+
+	/* Set model for module auth */
+	auth: function(model) {
+		auth.model(model);
 	},
 
 	/* Server start */
@@ -49,12 +53,18 @@ const server = {
 
 		/* Check if a route exists */
 		if(!route.check_exists(request.method, request.url)) {
+			
+			/* API entry point */
 			if(route.apis.state) {
 				return view.out(response, route.apis.view);
-			} else {
+			}
+
+			/* Route not found */
+			else {
 				response.status_code = 404;
 				return response.end("Route not found");
 			}
+			
 		}
 
 		/* Get route value */

@@ -1,7 +1,7 @@
-/* Require core */
 const view = require("../core/view.js");
 
-/* Require models */
+/* Require core */
+const auth = require("../core/auth.js");
 
 /* Main controller */
 const main = {
@@ -9,8 +9,15 @@ const main = {
 	/* Main function */
 	main: async function(request, response) {
 
-		view.out(response, "index.html");
-		
+		view.out(response, {
+			filename: "index.html",
+			args: {
+				SERVER: "user"
+			},
+		});
+
+		// response.end();
+
 		// let result, id;
 
 		/* Add user */
@@ -78,19 +85,19 @@ const main = {
 	/* Products page */
 	products: function(request, response) {
 
-		view.out(response, "products.html");
+		response.end();
 	},
 
 	/* Login page */
 	login: function(request, response) {
 
-		view.out(response, "login.html");
+		response.end();
 	},
 
 	/* Register page */
 	register: function(request, response) {
 
-		view.out(response, "register.html");
+		response.end();
 	}
 
 };

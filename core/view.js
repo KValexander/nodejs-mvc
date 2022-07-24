@@ -102,6 +102,7 @@ const view = {
 		}
 
 		response.setHeader("Content-Type", "text/html");
+		response.status_code = result.code;
 		response.end(result.content);
 	}
 

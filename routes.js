@@ -17,7 +17,7 @@ route.api("index.html");
 route.group(["middleware", type_middleware.html], function() {
 
 	route.get("/", main.main);
-	route.get("/orders", main.products);
+	route.get("/products", main.products);
 
 	route.get("/login", main.login);
 	route.get("/register", main.register);

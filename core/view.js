@@ -41,15 +41,47 @@ const view = {
 			for(let i = 0; i < match.length; i++) {
 				key = match[i].replace(/(\{|\}|\s)/g, "");
 				
-				if(/\.\w+$/.test(key)) {
+				/* Displaying object data */
+				if(key.includes("this.")) {
+					key = this._get_args_value(args, key);
+				}
+				
+				/* Get another view */
+				else if(/\.\w+$/.test(key)) {
 					key = await this.get(key);
 					key = (key.code == 200) ? key.content : "";
-				} else {
+				}
+
+				/* Substituting a value into a label */
+				else {
 					key = (key in args) ? args[key] : "";
 				}
 
 				result = `${result}`.replace(match[i], key);
 			}
+		}
+
+		return result;
+	},
+
+	/*  Get the value of the argument
+		args = {}
+		string = ""
+	*/
+	_get_args_value: function(args, string) {
+		let result, array;
+
+		array = string.split(".");
+		result = args[array[1]];
+		
+		if(result) {
+			for(let i = 2; i < array.length; i++) {
+				result = result[array[i]];
+			}
+		}
+		
+		else {
+			result = "";
 		}
 
 		return result;
@@ -63,20 +95,17 @@ const view = {
 		args = {}
 	*/
 	get: async function(object="", argumnts={}) {
-		let result, filename=object, args=argumnts;
+		let result, view=object, args=argumnts;
 
 		if(typeof object == "object") {
+			args = object;
 
-			if("filename" in object) {
-				filename = object.filename;
-			}
-
-			if("args" in object) {
-				args = object.args;
+			if("view" in object) {
+				view = object.view;
 			}
 		}
 
-		result = await this.read(this.path + filename);
+		result = await this.read(this.path + view);
 		
 		if(result.code == 200) {
 			result.content = await this.parse(result.content, args);
@@ -95,7 +124,7 @@ const view = {
 	out: async function(response, object={}, args={}) {
 		let result;
 
-		result = await this.get(object);
+		result = await this.get(object, args);
 		
 		if(result.code == 400) {
 			result.content = "View not found";

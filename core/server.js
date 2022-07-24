@@ -8,6 +8,7 @@ const fs = require("fs");
 const auth 	= require("./auth.js");
 const db 	= require("./db.js");
 const view 	= require("./view.js");
+const component = require("./component.js");
 
 /* Require routes */
 const route = require("../routes.js");
@@ -27,6 +28,7 @@ const server = {
 
 	/* Server start */
 	start: (host, port) => {
+		component.load();
 
 		/* Check host and port */
 		if(!host || !port)  {

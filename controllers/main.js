@@ -1,7 +1,7 @@
-const view = require("../core/view.js");
-
 /* Require core */
+const view = require("../core/view.js");
 const auth = require("../core/auth.js");
+const component = require("../core/component.js");
 
 /* Main controller */
 const main = {
@@ -9,12 +9,16 @@ const main = {
 	/* Main function */
 	main: async function(request, response) {
 
-		view.out(response, {
-			filename: "index.html",
-			args: {
-				SERVER: "user"
-			},
-		});
+		// console.log(component.get("main"));
+		response.end(component.get("main"));
+
+		// view.out(response, "index.html", {
+		// 	SERVER: "server",
+		// 	content: {
+		// 		code: 1,
+		// 		content: 2
+		// 	}
+		// });
 
 		// response.end();
 

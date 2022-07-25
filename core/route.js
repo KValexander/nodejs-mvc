@@ -2,7 +2,7 @@ const route = {
 
 	/* Api */
 	apis: {
-		state: false,
+		start: false,
 		entry: ""
 	},
 
@@ -24,7 +24,7 @@ const route = {
 	/* Start api */
 	api: function(name) {
 		this.apis = {
-			state: true,
+			start: true,
 			entry: name
 		};
 	},

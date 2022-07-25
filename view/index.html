@@ -4,19 +4,26 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
+
 	<link rel="stylesheet" href="public/style.css">
-	<script src="public/script.js"></script>
+
+	<!-- Connect scripts -->
+	<script src="public/app/core/out.js"></script>
+	<script src="public/app/core/request.js"></script>
+	
+	<script src="public/app/core/route.js"></script>
+	<script src="public/app/controller.js"></script>
+	
+	<script src="public/app/routes.js"></script>
+
+	<script src="public/app/core/client.js"></script>
+
+	<script src="public/app/script.js"></script>
+
 </head>
 <body>
 
-	<h1>Main page</h1>
-
-	{{ menu.html }}
-
-	{{ SERVER }}
-
-	{{ this.content.code }}
-
+	<div id="app"></div>
 
 </body>
 </html>

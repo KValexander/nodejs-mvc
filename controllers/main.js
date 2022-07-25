@@ -8,8 +8,11 @@ const main = {
 
 	/* Main function */
 	main: async function(request, response) {
+		let layout;
 
-		response.end(component.get("main"));
+		layout = component.get("layout");
+
+		response.end(layout);
 		
 		/* Component template */
 		// console.log(component.get("template", [{
@@ -102,24 +105,6 @@ const main = {
 		// });
 
 	},
-
-	/* Products page */
-	products: function(request, response) {
-
-		response.end();
-	},
-
-	/* Login page */
-	login: function(request, response) {
-
-		response.end();
-	},
-
-	/* Register page */
-	register: function(request, response) {
-
-		response.end();
-	}
 
 };
 

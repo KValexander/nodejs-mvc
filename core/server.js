@@ -49,6 +49,7 @@ const server = {
 
 	/* Call route */
 	call_route: function(request, response) {
+		let object;
 
 		/* Сheck if route is a file */
 		if(server.check_file(request.url)) {
@@ -59,7 +60,7 @@ const server = {
 		if(!route.check_exists(request.method, request.url)) {
 			
 			/* API entry point */
-			if(route.apis.state) {
+			if(route.apis.start) {
 
 				/* Function */
 				if(typeof route.apis.entry == "function") {
@@ -75,6 +76,7 @@ const server = {
 				else {
 					return response.end(component.get(route.apis.entry));
 				}
+				
 			}
 
 			/* Route not found */
@@ -86,7 +88,7 @@ const server = {
 		}
 
 		/* Get route value */
-		let object = route.get_route(request.method, request.url);
+		object = route.get_route(request.method, request.url);
 
 		/* Check middleware */
 		if(object.middlewares.length) {

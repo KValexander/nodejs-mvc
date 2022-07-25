@@ -9,9 +9,27 @@ const main = {
 	/* Main function */
 	main: async function(request, response) {
 
-		// console.log(component.get("main"));
 		response.end(component.get("main"));
+		
+		/* Component template */
+		// console.log(component.get("template", [{
+		// 			name: "Name1",
+		// 			surname: "Surname1"
+		// 		},{
+		// 			name: "Name2",
+		// 			surname: "Surname2"
+		// 		},]));
 
+		/* Component */
+		// response.end(component.get("main", {
+		// 	content: "js",
+		// 	code: {
+		// 		first: 1,
+		// 		second: 2
+		// 	}
+		// }));
+
+		/* View out */
 		// view.out(response, "index.html", {
 		// 	SERVER: "server",
 		// 	content: {
@@ -20,7 +38,6 @@ const main = {
 		// 	}
 		// });
 
-		// response.end();
 
 		// let result, id;
 

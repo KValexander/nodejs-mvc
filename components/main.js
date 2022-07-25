@@ -3,6 +3,8 @@ const main = () => {
 		{{ header }}
 		<h1>Main page</h1>
 		{{ menu }}
+		{{ this.content }}
+		{{ this.code.first }}
 	`);
 }
 

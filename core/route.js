@@ -3,7 +3,7 @@ const route = {
 	/* Api */
 	apis: {
 		state: false,
-		view: ""
+		entry: ""
 	},
 
 	/* Current route */
@@ -22,10 +22,10 @@ const route = {
 	},
 
 	/* Start api */
-	api: function(filename) {
+	api: function(name) {
 		this.apis = {
 			state: true,
-			view: filename
+			entry: name
 		};
 	},
 

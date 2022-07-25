@@ -1,28 +1,71 @@
+/* Require fs */
 const fs = require("fs");
 
+/* Component */
 const component = {
 	path: process.cwd() + "/components/",
 	_components: {},
 
-	/* Load components */
-	load: function() {
-		let files, file;
-		files = fs.readdirSync(this.path);
+	/* 	Load components
+		path = ""
+	*/
+	load: function(path="") {
+		let files, file, fullpath = this.path;
+		if(path) {
+			fullpath = path
+		}
+		files = fs.readdirSync(fullpath);
 		for(let i = 0; i < files.length; i++) {
 			file = files[i].split(".");
-			if(file[1] == "js") {
-				this.add(file[0], require(this.path + files[i]));
+			if(file[file.length - 1] == "js") {
+				this.add(file[0], require(fullpath + files[i]));
+			} else if(file.length == 1) {
+				this.load(this.path + file[0] + "/");
 			}
 		}
 	},
 
-	/* Add component */
-	add: function(key, cmpnt) {
-		this._components[key] = cmpnt;
+	/* 	Add component
+		key = ""
+		comp = f() / {}
+	*/
+	add: function(key, comp) {
+		if(typeof comp == "object") {
+			for(let key in comp) {
+				this._components[key] = comp[key];
+			}
+		} else if(typeof comp == "function") {
+			key = (comp.name) ? comp.name : key;
+			this._components[key] = comp;
+		}
 	},
 
-	/* Parse component */
-	parse: function(content) {
+	/*  Get component
+		key = ""
+		args = {} / []
+	*/
+	get: function(key, args={}) {
+		let result = "", comp = this._components[key];
+		if(key in this._components) {
+			if(typeof comp == "function") {
+				if(Array.isArray(args)) {
+					for(let i = 0; i < args.length; i++) {
+						result += this.parse(comp(), args[i]);
+					}
+				} else {
+					result = this.parse(comp(), args);
+				}
+			}
+		}
+
+		return result;
+	},
+
+	/* 	Parse component
+		content = ""
+		args = {}
+	*/
+	parse: function(content, args={}) {
 		/* Variables */
 		let result = content, key;
 		let match = [];
@@ -38,6 +81,12 @@ const component = {
 					key = this.get(key);
 				}
 
+				/* Arguments data */
+				else if (key.includes("this.")) {
+					key = this._get_args_value(key, args);
+				}
+
+				/* Nothing */
 				else {
 					key = "";
 				}
@@ -49,17 +98,29 @@ const component = {
 		return result;
 	},
 
-	/* Get component */
-	get: function(key) {
-		let result = "";
 
-		if(key in this._components) {
-			result = this._components[key]();
-			result = this.parse(result);
+	/*  Get the value of the argument
+		key = ""
+		args = {}
+	*/
+	_get_args_value: function(key, args) {
+		let result, array;
+
+		array = key.split(".");
+		result = args[array[1]];
+		
+		if(result) {
+			for(let i = 2; i < array.length; i++) {
+				result = result[array[i]];
+			}
+		}
+		
+		else {
+			result = "";
 		}
 
 		return result;
-	}
+	},
 
 };
 

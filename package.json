@@ -1,7 +1,7 @@
 {
-	"name": "training",
+	"name": "nodejs-mvc",
 	"version": "1.0.0",
-	"description": "nodejs training project",
+	"description": "nodejs mvc project",
 	"author": "KValexander",
 	"main": "app.js",
 	"license": "MIT",

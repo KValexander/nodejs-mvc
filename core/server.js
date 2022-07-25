@@ -28,12 +28,14 @@ const server = {
 
 	/* Server start */
 	start: (host, port) => {
-		component.load();
 
 		/* Check host and port */
 		if(!host || !port)  {
 			return console.log("Server startup error: No host or port passed");
 		}
+
+		/* Load components */
+		component.load();
 
 		/* Create server */
 		http.createServer(server.call_route)
@@ -58,7 +60,21 @@ const server = {
 			
 			/* API entry point */
 			if(route.apis.state) {
-				return view.out(response, route.apis.view);
+
+				/* Function */
+				if(typeof route.apis.entry == "function") {
+					return route.apis.entry(request, response);
+				}
+
+				/* View */
+				else if(server.check_file(route.apis.entry)) {
+					return view.out(response, route.apis.entry);
+				}
+
+				/* Component */
+				else {
+					return response.end(component.get(route.apis.entry));
+				}
 			}
 
 			/* Route not found */

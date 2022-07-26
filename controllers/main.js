@@ -8,11 +8,11 @@ const main = {
 
 	/* Main function */
 	main: async function(request, response) {
-		let layout;
+		response.end();
 
-		layout = component.get("layout");
-
-		response.end(layout);
+		// let layout;
+		// layout = component.get("layout");
+		// response.end(layout);
 		
 		/* Component template */
 		// console.log(component.get("template", [{

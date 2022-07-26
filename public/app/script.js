@@ -1,2 +1,2 @@
-document.addEventListener("DOMContentLoaded", client.page);
-
+/* Start client */
+document.addEventListener("DOMContentLoaded", client.start);

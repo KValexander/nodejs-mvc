@@ -1,17 +1,19 @@
 /* Layout component */
 component.add("layout", function() {
 	return (`
-		<header>
-			<div class="content">
-				<h2>{{ this.title }}</h2>
-				{{ menu }}
-			</div>
-		</header>
-		<main>
-			<div class="content">
-				{{ this.content }}
-			</div>
-		</main>
+		<div id="#app">
+			<header>
+				<div class="content">
+					<h2>{{ this.title }}</h2>
+					{{ menu }}
+				</div>
+			</header>
+			<main>
+				<div class="content">
+					{{ this.content }}
+				</div>
+			</main>
+		</div>
 	`);
 });
 
@@ -24,4 +26,18 @@ component.add("menu", function() {
 			<a id="link" href="/login">Login</a>
 		</nav>
 	<br>`);
+});
+
+/* Register form */
+component.add("register_form", function() {
+	return (`
+		<form id="controller" data-onsubmit="register" action="/api/register" method="POST">
+			<input type="text" name="name" placeholder="Name" required><p>
+			<input type="text" name="surname" placeholder="Surname" required><p>
+			<input type="email" name="email" placeholder="E-mail" required><p>
+			<input type="text" name="login" placeholder="Login" required><p>
+			<input type="password" name="password" placeholder="Password" required><p>
+			<button>Submit</button>
+		</form>
+	`);
 });

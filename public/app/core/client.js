@@ -1,6 +1,17 @@
 const client = {
 	_history: [],
 
+	/* Start */
+	start: function() {
+		client.search();
+	},
+
+	/* Error page */
+	error_page: function() {
+		window.history.pushState(null, null, "/404");
+		out.selector("body", "<h2>Error 404 - Page not found</h2>");
+	},
+
 	/* Save history */
 	_history_save: function(href) {
 		if(client._history[client._history.length - 1] != href) {
@@ -18,11 +29,6 @@ const client = {
 			result = location.pathname;
 		}
 		return result;
-	},
-
-	/* Start */
-	start: function() {
-		client.search();
 	},
 
 	/* Search */
@@ -72,14 +78,15 @@ const client = {
 		/* Call controller */
 		controller();
 
-		/* Link remapping */
-		return client._links();
+		/* Events remapping */
+		return client._events();
 	},
 
-	/* Link remapping */
-	_links: function() {
-		let links;
+	/* Events remapping */
+	_events: function() {
+		let links, methods;
 
+		/* Links */
 		links = document.querySelectorAll("#link");
 		for(let i = 0; i < links.length; i++) {
 			links[i].onclick = (e) => {
@@ -87,12 +94,14 @@ const client = {
 				client.search(e.target.getAttribute("href"));
 			};
 		}
-	},
 
-	/* Error page */
-	error_page: function() {
-		window.history.pushState(null, null, "/404");
-		out.selector("body", "<h2>Error 404 - Page not found</h2>");
+		/* Controllers */
+		methods = document.querySelectorAll("#controller");
+		for(let i = 0; i < methods.length; i++) {
+			for(event in methods[i].dataset) {
+				methods[i][event] = controllers[methods[i].dataset[event]];
+			}
+		}
 	},
 };
 

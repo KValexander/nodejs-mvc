@@ -2,39 +2,28 @@
 const controllers = {
 
 	/* Main page */
-	main: async function() {
-		let result;
-
-		result = component.get("layout", {
-			title: "Main page"
-		});
-
-		out.selector("body", result);
-
-	},
-
-	/* Register page */
-	register: async function() {
-		let result;
-
-		result = component.get("layout", {
-			title: "Register page"
-		});
-
-		out.selector("body", result);
+	main_page: async function() {
+		out.selector("header h2", "Main page");
+		out.selector("main .content", "");
 
 	},
 
 	/* Login page */
-	login: async function() {
-		let result;
+	login_page: async function() {
+		out.selector("header h2", "Login page");
+		out.selector("main .content", "");
 
-		result = component.get("layout", {
-			title: "Login page"
-		});
+	},
 
-		out.selector("body", result);
+	/* Register page */
+	register_page: async function() {
+		out.selector("header h2", "Register page");
+		out.selector("main .content", component.get("register_form"));
+	},
 
+	/* Register */
+	register: async function(e) {
+		e.preventDefault();
 	},
 
 };

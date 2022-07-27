@@ -24,6 +24,8 @@ const controllers = {
 	/* Register */
 	register: async function(e) {
 		e.preventDefault();
+
+		console.log("register form");
 	},
 
 };

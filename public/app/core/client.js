@@ -3,13 +3,13 @@ const client = {
 
 	/* Start */
 	start: function() {
-		client.search();
+		client.search(location.pathname, true);
 	},
 
 	/* Error page */
 	error_page: function() {
 		window.history.pushState(null, null, "/404");
-		out.selector("body", "<h2>Error 404 - Page not found</h2>");
+		document.body.innerHTML = "<h2>Error 404 - Page not found</h2>";
 	},
 
 	/* Save history */
@@ -26,13 +26,20 @@ const client = {
 			result = client._history[client._history.length - 2];
 			client._history.pop();
 		} else {
-			result = location.pathname;
+			result = client._history[client._history.length - 1];
 		}
 		return result;
 	},
 
 	/* Search */
-	search: function(href=location.pathname) {
+	search: function(href=location.pathname, start=false) {
+		/* Check */
+		if(!start) {
+			if(location.pathname == href) {
+				return;
+			}
+		}
+
 		/* Get path */
 		let path = client._href(href);
 
@@ -96,10 +103,10 @@ const client = {
 		}
 
 		/* Controllers */
-		methods = document.querySelectorAll("#controller");
+		methods = document.querySelectorAll("#event");
 		for(let i = 0; i < methods.length; i++) {
 			for(event in methods[i].dataset) {
-				methods[i][event] = controllers[methods[i].dataset[event]];
+				methods[i][event] = new Function(`e`, `return ${methods[i].dataset[event]}(e);`);
 			}
 		}
 	},

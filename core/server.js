@@ -82,7 +82,7 @@ const server = {
 			/* Route not found */
 			else {
 				response.status_code = 404;
-				return response.end("Route not found");
+				return response.end(`Route not found`);
 			}
 			
 		}
@@ -99,7 +99,7 @@ const server = {
 		/* Check route value */
 		if(typeof object.value != "function") {
 			response.status_code = 404;
-			return response.end("Function not found");
+			return response.end(`Function not found`);
 		}
 
 		/* Call route value */
@@ -118,13 +118,13 @@ const server = {
 			/* Check middleware */
 			if(typeof middleware != "function") {
 				response.status_code = 404;
-				return response.end("Middleware not found");
+				return response.end(`Middleware not found`);
 			}
 
 			/* Check middleware */
 			if(!middleware(request, response)) {
 				response.status_code = 400;
-				return response.end("The middleware returned a false value");
+				return response.end(`The middleware returned a false value`);
 			}
 
 		}
@@ -149,7 +149,7 @@ const server = {
 		/* File not exists */
 		catch(err) {
 			response.status_code = 404;
-			response.write("Route not found");
+			response.write(`File not found`);
 		}
 
 		response.end();

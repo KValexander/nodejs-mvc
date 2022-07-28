@@ -31,7 +31,7 @@ component.add("menu", function() {
 /* Register form */
 component.add("register_form", function() {
 	return (`
-		<form id="event" data-onsubmit="controllers.login_page" action="/api/register" method="POST">
+		<form id="event" data-onsubmit="controllers.register" action="/api/register" method="POST">
 			<input type="text" name="name" placeholder="Name" required><p>
 			<input type="text" name="surname" placeholder="Surname" required><p>
 			<input type="email" name="email" placeholder="E-mail" required><p>

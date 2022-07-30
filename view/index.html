@@ -7,13 +7,17 @@
 
 	<link rel="stylesheet" href="public/css/style.css">
 
-	<!-- Connect core scripts -->
+	<!-- Connect core scripts (no dependencies) -->
 	<script src="/public/app/core/component.js"></script>
 	<script src="/public/app/core/request.js"></script>
+	<script src="/public/app/core/create.js"></script>
 	<script src="/public/app/core/route.js"></script>
 	<script src="/public/app/core/out.js"></script>
 	<!-- Client -->
 	<script src="/public/app/core/client.js"></script>
+
+	<!-- Connect core scripts (with dependencies) -->
+	<script src="/public/app/core/form.js"></script> <!-- (create.js) -->
 
 	<!-- Connect other scripts -->
 	<!-- Components (component.js) -->

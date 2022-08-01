@@ -1,7 +1,6 @@
 /* Require core */
 const view = require("../core/view.js");
 const auth = require("../core/auth.js");
-const component = require("../core/component.js");
 
 /* Main controller */
 const main = {
@@ -9,28 +8,6 @@ const main = {
 	/* Main function */
 	main: async function(request, response) {
 		response.end();
-
-		// let layout;
-		// layout = component.get("layout");
-		// response.end(layout);
-		
-		/* Component template */
-		// console.log(component.get("template", [{
-		// 			name: "Name1",
-		// 			surname: "Surname1"
-		// 		},{
-		// 			name: "Name2",
-		// 			surname: "Surname2"
-		// 		},]));
-
-		/* Component */
-		// response.end(component.get("main", {
-		// 	content: "js",
-		// 	code: {
-		// 		first: 1,
-		// 		second: 2
-		// 	}
-		// }));
 
 		/* View out */
 		// view.out(response, "index.html", {

@@ -13,7 +13,6 @@ const json = require("./middlewares/json.js");
 	will be redirected to this view
 */
 route.api("index.html"); // view
-// route.api("main"); 		// component
 // route.api(function(request, response) {
 // 	response.end();
 // });

@@ -8,7 +8,6 @@ const fs = require("fs");
 const auth 	= require("./auth.js");
 const db 	= require("./db.js");
 const view 	= require("./view.js");
-const component = require("./component.js");
 
 /* Require routes */
 const route = require("../routes.js");
@@ -33,9 +32,6 @@ const server = {
 		if(!host || !port)  {
 			return console.log("Server startup error: No host or port passed");
 		}
-
-		/* Load components */
-		component.load();
 
 		/* Create server */
 		http.createServer(server.call_route)
@@ -70,11 +66,6 @@ const server = {
 				/* View */
 				else if(server.check_file(route.apis.entry)) {
 					return view.out(response, route.apis.entry);
-				}
-
-				/* Component */
-				else {
-					return response.end(component.get(route.apis.entry));
 				}
 				
 			}

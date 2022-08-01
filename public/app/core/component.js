@@ -3,15 +3,17 @@ const component = {
 	_components: {},
 
 	/* 	Add component
-		key = ""
+		key = "" / {}
 		comp = f() / {}
 	*/
 	add: function(key, comp) {
-		if(typeof comp == "object") {
-			for(let key in comp) {
-				this._components[key] = comp[key];
+		if(typeof key == "object") {
+			for(let k in key) {
+				this._components[k] = key[k];
 			}
-		} else if(typeof comp == "function") {
+		}
+
+		else if(typeof comp == "function") {
 			key = (comp.name) ? comp.name : key;
 			this._components[key] = comp;
 		}
@@ -23,16 +25,27 @@ const component = {
 	*/
 	get: function(key, args={}) {
 		let result = "", comp = this._components[key];
+
 		if(key in this._components) {
+
 			if(typeof comp == "function") {
+
 				if(Array.isArray(args)) {
+
 					for(let i = 0; i < args.length; i++) {
+
 						result += this.parse(comp(), args[i]);
+						
 					}
-				} else {
+
+				}
+
+				else {
 					result = this.parse(comp(), args);
 				}
+
 			}
+
 		}
 
 		return result;

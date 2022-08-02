@@ -31,7 +31,8 @@ const validator = {
 		data = {}
 	*/
 	check: function(key, data) {
-		let messages = [];
+		let messages = [], rules = [];
+		let check;
 
 		/* Checking for template existence */
 		if(key in this._templates) {
@@ -40,6 +41,22 @@ const validator = {
 
 				/* Checking if the required data is in the template */
 				if(prop in this._templates[key]) {
+
+					rules = data[prop].split("|");
+
+					for(let rule in rules) {
+
+						if(rule in this._rules) {
+
+							check = this._rules[rule]();
+
+							if(!check) {
+								messages.push(check);
+							}
+						
+						}
+
+					}
 
 
 
@@ -56,11 +73,11 @@ const validator = {
 };
 
 validator.rule("request", function(data) {
-	return (data) ? true : "The field must not be empty";
+	return (data) ? false : "The field must not be empty";
 });
 
 validator.rule({
-	request: data => (data) ? true : "The field must not be empty",
+	request: data => (data) ? false : "The field must not be empty",
 });
 
 module.exports = validator;

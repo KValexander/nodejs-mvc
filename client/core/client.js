@@ -10,7 +10,7 @@ const route = require("../routes.js");
 
 /* Client */
 const client = {
-	_error: "Route not found",
+	_error: `<div id="app">Route not found</div>`,
 
 	/* Set error */
 	error: function(name) {

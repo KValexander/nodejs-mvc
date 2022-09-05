@@ -1,6 +1,5 @@
 /* Require core */
 const view = require("../core/view.js");
-const auth = require("../core/auth.js");
 
 /* Main controller */
 const main = {

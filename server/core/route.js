@@ -36,11 +36,7 @@ const route = {
 			return false;
 		}
 
-		if(!(route in this.routes[method])) {
-			return false;
-		}
-
-		return true;
+		return (route in this.routes[method]);
 	},
 
 	/* Get route value */

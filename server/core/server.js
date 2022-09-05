@@ -5,7 +5,6 @@ const http = require("http");
 const fs = require("fs");
 
 /* Require core */
-const auth 	= require("./auth.js");
 const db 	= require("./db.js");
 const view 	= require("./view.js");
 
@@ -18,11 +17,6 @@ const server = {
 	/* Database connection */
 	connect: function(data) {
 		db.connection(data);
-	},
-
-	/* Set model for module auth */
-	auth: function(model) {
-		auth.model(model);
 	},
 
 	/* Server start */

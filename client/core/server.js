@@ -1,8 +1,8 @@
 /* Require http */
 const http = require("http");
 
-/* Require fs */
-const fs = require("fs");
+/* Require file */
+const file = require("./file.js");
 
 /* Require routes */
 const route = require("../routes.js");
@@ -33,8 +33,8 @@ const server = {
 		let object;
 
 		/* Сheck if route is a file */
-		if(server.check_file(request.url)) {
-			return server.connect_file(request, response);
+		if(file.check(request.url)) {
+			return file.connect(request, response);
 		}
 
 		/* Check if a route exists */
@@ -88,30 +88,6 @@ const server = {
 
 		}
 
-	},
-
-	/* Check file */
-	check_file: function(url) {
-		let regex = /\.\w+$/;
-		return regex.test(url);
-	},
-
-	/* Connect file */
-	connect_file: async function(request, response) {
-
-		/* File exists */
-		try {
-			response.status_code = 200;
-			response.write(fs.readFileSync(process.cwd() + request.url));
-		}
-
-		/* File not exists */
-		catch(err) {
-			response.status_code = 404;
-			response.write(`File not found`);
-		}
-
-		response.end();
 	},
 
 };
